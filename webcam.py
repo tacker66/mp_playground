@@ -22,15 +22,15 @@ ssid = config["ssid"]
 pwd  = config["pwd"]
 
 led = Pin(2, Pin.OUT)
-val = 0
-led.value(val)
-
+led_val = 0
+led.value(led_val)
 def toggle_led():
-    if val == 0:
-        val = 1
+    global led_val
+    if led_val == 0:
+        led_val = 1
     else:
-        val = 0
-    led.value(val)
+        led_val = 0
+    led.value(led_val)
         
 acp_if = network.WLAN(network.AP_IF)
 sta_if = network.WLAN(network.STA_IF)
