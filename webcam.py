@@ -2,7 +2,7 @@
 # https://github.com/pfalcon/picoweb
 
 from machine import Pin
-import gc
+import micropython
 import utime
 import network
 import camera
@@ -123,15 +123,13 @@ def index(req, resp):
 
 def send_frame():
     buf = camera.capture()
+    #micropython.mem_info()
     yield (b'--frame \r\n Content-Type: image/jpeg \r\n\r\n' + buf + b'\r\n')
-    del buf
-    gc.collect()
         
 def video(req, resp):
     yield from picoweb.start_response(resp, content_type="multipart/x-mixed-replace; boundary=frame")
     while True:
         yield from resp.awrite(next(send_frame()))
-        gc.collect()
 
 ROUTES = [
     ("/", index),
