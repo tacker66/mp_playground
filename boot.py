@@ -5,6 +5,7 @@ import gc
 import uos as os
 import uerrno as errno
 import time
+import machine
 
 #print("Enable a Debugger to connect ...")
 #time.sleep(5)
