@@ -6,19 +6,20 @@ import uos as os
 import uerrno as errno
 import time
 import machine
+import micropython
 
-#print("Enable a Debugger to connect ...")
-#time.sleep(5)
+print("Enable a Debugger to connect ...")
+time.sleep(3)
 
 IS_DIR = 0x4000
 IS_REGULAR = 0x8000
 
 start = ""
 
+print('{0} MHz clock frequeny'.format(machine.freq()))
+micropython.mem_info()
 s = os.statvfs('//')
 print('{0} MB free flash memory'.format((s[0]*s[3])/1048576))
-print('{0} MB free RAM'.format((gc.mem_free())/1048576))
-print('{0} MHz clock frequeny'.format(machine.freq()))
 
 found = False
 iter = os.ilistdir()
