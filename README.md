@@ -1,2 +1,1 @@
-# esp32
-ESP32 and Rasperry Pico playground ...
+# MicroPython playground
