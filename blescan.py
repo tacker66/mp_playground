@@ -44,14 +44,19 @@ async def discover(device):
         conn = await device.connect()
     except:
         pass
-    servs = list()
+    servs = dict()
     if conn != None and conn._conn_handle > 0:
         async for serv in conn.services():
-            servs.append(serv)
+            servs[serv] = list()
+        for serv in servs:
+            async for char in serv.characteristics():
+                servs[serv].append(char)
         for serv in servs:
             print(" ", serv)
-            async for char in serv.characteristics():
+            for char in servs[serv]:
                 print("   ", char)
+                async for desc in char.descriptors():
+                    print("     ", desc)
     if conn != None:
         await conn.disconnect()
     if len(servs) == 0:
