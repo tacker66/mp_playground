@@ -38,6 +38,8 @@ def hexdump(bytesset):
             bs_str += (chr(b) if 32 <= b <= 127 else ".") + " "
         print(" ", bs_hex, bs_str)
 
+FLAG_READ = const(0x0002)
+
 async def discover(device):
     conn = None
     try:
@@ -45,18 +47,28 @@ async def discover(device):
     except:
         pass
     servs = dict()
-    if conn != None and conn._conn_handle > 0:
+    if conn != None and conn._conn_handle != None and conn._conn_handle > 0:
         async for serv in conn.services():
-            servs[serv] = list()
+            servs[serv] = dict()
         for serv in servs:
             async for char in serv.characteristics():
-                servs[serv].append(char)
+                servs[serv][char] = list()
+        for serv in servs:
+            for char in servs[serv]:
+                async for desc in char.descriptors():
+                    servs[serv][char].append(desc)
         for serv in servs:
             print(" ", serv)
             for char in servs[serv]:
-                print("   ", char)
-                async for desc in char.descriptors():
-                    print("     ", desc)
+                charval = ""
+                if char.properties & FLAG_READ:
+                    charval = "- " + str(await char.read())
+                print("   ", char, charval)
+                for desc in servs[serv][char]:
+                    descval = ""
+                    if desc.properties & FLAG_READ:
+                        descval = "- " + str(await desc.read())
+                    print("     ", desc, descval)
     if conn != None:
         await conn.disconnect()
     if len(servs) == 0:
