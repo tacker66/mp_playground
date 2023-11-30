@@ -45,7 +45,7 @@ async def discover(device):
     try:
         conn = await device.connect()
     except:
-        pass
+        print("CONNECT FAILED")
     servs = dict()
     if conn != None and conn._conn_handle != None and conn._conn_handle > 0:
         async for serv in conn.services():
@@ -62,15 +62,24 @@ async def discover(device):
             for char in servs[serv]:
                 charval = ""
                 if char.properties & FLAG_READ:
-                    charval = "- " + str(await char.read())
+                    try: # might fail
+                        charval = "- " + str(await char.read())
+                    except:
+                        charval = "- READ ERROR"
                 print("   ", char, charval)
                 for desc in servs[serv][char]:
                     descval = ""
                     if desc.properties & FLAG_READ:
-                        descval = "- " + str(await desc.read())
+                        try: # might fail
+                            descval = "- " + str(await desc.read())
+                        except:
+                            descval = "- READ ERROR"
                     print("     ", desc, descval)
     if conn != None:
-        await conn.disconnect()
+        try: # might fail
+            await conn.disconnect()
+        except:
+            print("DISCONNECT TIMEOUT")
     if len(servs) == 0:
         print("  -")
     
